@@ -142,7 +142,7 @@ export default function TransferList({ labels = Array.from({ length: 8 }, (_, id
 
     return (
         <Grid container spacing={2} justifyContent="center" alignItems="center">
-            <Grid item>{customList('Choices', left,  searchLeft,  setSearchLeft)}</Grid> 
+            <Grid item>{customList('Not in Form', left,  searchLeft,  setSearchLeft)}</Grid> 
             <Grid item>
                 <Grid container direction="column" alignItems="center">
                     <Button
@@ -167,7 +167,7 @@ export default function TransferList({ labels = Array.from({ length: 8 }, (_, id
                     </Button>
                 </Grid>
             </Grid>
-            <Grid item>{customList('Chosen', right, searchRight, setSearchRight)}</Grid>
+            <Grid item>{customList('In Form', right, searchRight, setSearchRight)}</Grid>
 
             
             <Grid item xs={12} container justifyContent="center">
