@@ -9,7 +9,7 @@ function App() {
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Landing />} />
-          <Route path="/:regionid" element={<Form/>} />
+          <Route path="/:formid" element={<Form/>} />
         </Routes>
       </BrowserRouter>
     </div>

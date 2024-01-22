@@ -7,10 +7,11 @@ import FormGroup from '@mui/material/FormGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Switch from '@mui/material/Switch';
 import Grid from '@mui/material/Grid';
+import { useNavigate } from 'react-router-dom';
 
 const SelectBar = ({isSwitchOn, setIsSwitchOn,  selectedValue, setSelectedValue}) => {
 
-
+  const navigate = useNavigate();
 
   const regions = ['None','Princeton', 'CMU', 'Berkeley'];
   const questionSets = ['None','Question Set 1', 'Question Set 2', 'Question Set 3'];
@@ -51,8 +52,8 @@ const SelectBar = ({isSwitchOn, setIsSwitchOn,  selectedValue, setSelectedValue}
                     {region}
                   </MenuItem>
                 ))
-              : questionSets.map((set) => (
-                  <MenuItem key={set} value={set}>
+              : questionSets.map((set,index) => (
+                  <MenuItem key={set} value={set} onClick={()=>{navigate(`/${index}`)}}>
                     {set}
                   </MenuItem>
                 ))}

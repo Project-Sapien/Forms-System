@@ -1,8 +1,6 @@
 import React from 'react'
-import Navbar from '../components/Navbar'
 import TransferList from '../components/TransferList'
 import SelectBar from '../components/SelectBar'
-import QuestionSetEditor from '../components/QuestionSetEditor'
 const Landing = () => {
   const [isSwitchOn, setIsSwitchOn] = React.useState(false);
   const [selectedValue, setSelectedValue] = React.useState('');
@@ -17,7 +15,6 @@ const Landing = () => {
           />
 
           {(isSwitchOn && selectedValue) && <TransferList/>}
-          {(!isSwitchOn && selectedValue) && <QuestionSetEditor/>}
 
     </div>
   )
