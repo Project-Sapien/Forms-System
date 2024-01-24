@@ -3,7 +3,7 @@ import React from 'react'
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 
 //mui utilities
-import {Grid} from '@mui/material';
+import {Autocomplete, FormControl, Grid, InputLabel, MenuItem, Select} from '@mui/material';
 import { Paper, Typography } from '@mui/material';
 import TextField from '@mui/material/TextField';
 import Accordion from '@mui/material/Accordion';
@@ -36,13 +36,13 @@ import formService from '../services/formService';
 
 function QuestionSetEditor(props)//props is for sending form id so that pre loaded form can be edited
 {
+  
 
   const [questions, setQuestions]= React.useState([]);
   const [openUploadImagePop, setOpenUploadImagePop] = React.useState(false);
   const [imageContextData, setImageContextData] = React.useState({question: null, option: null});
   const [formData, setFormData] = React.useState({});
   const [loadingFormData, setLoadingFormData] = React.useState(true);
-  
 
 //   React.useEffect(()=>{
     
@@ -105,9 +105,9 @@ function QuestionSetEditor(props)//props is for sending form id so that pre load
   }
 
   function addMoreQuestionField(){
-      expandCloseAll(); //I AM GOD
+      expandCloseAll(); 
 
-      setQuestions(questions=> [...questions, {questionText: "Question", options : [{optionText: "Option 1"}], open: true}]);
+      setQuestions(questions=> [...questions, {questionText: "Question", options : [{optionText: "Option 1"}],questionType:"Multiple Choice", open: true}]);
   }
 
   function copyQuestion(i){
@@ -251,6 +251,12 @@ function QuestionSetEditor(props)//props is for sending form id so that pre load
      setQuestions(qs);
   }
 
+  function changeQuestionType(i, indicator) {
+    let questionsCopy = [...questions];
+    questionsCopy[i].questionType = (indicator === 1) ? "Multiple Choice" : "Paragraph";
+    setQuestions(questionsCopy);
+  }
+
   function questionsUI(){
     return  questions.map((ques, i)=> (
       <Draggable key={i} draggableId={i + 'id'} index={i} className="w-[90vw] sm:w-[60vw]">
@@ -277,32 +283,44 @@ function QuestionSetEditor(props)//props is for sending form id so that pre load
                 {/* <TextField id="standard-basic" label=" " value="Question" InputProps={{ disableUnderline: true }} />  */}
                 
                 <Typography variant="subtitle1" style={{marginLeft: '0px'}}>{i+1}.  {ques.questionText}</Typography>
-
-
-                {ques.questionImage !==""?(
-                  <div>
-                    <img src={ques.questionImage} width="400px" height="auto" /><br></br><br></br>
-                  </div>
-                ): "" }
+                      {
+                        ques.questionImage !== "" ?
+                        (
+                          <div>
+                            <img src={ques.questionImage} width="400px" height="auto" /><br></br><br></br>
+                          </div> 
+                        )
+                        :
+                        ""
+                      }
                 
-                {ques.options.map((op, j)=>(
-                 
-                 <div key={j}>
-                   <div style={{display: 'flex'}}>
-                    <FormControlLabel disabled control={<Radio style={{marginRight: '3px', }} />} label={
-                        <Typography style={{color: '#555555'}}>
-                          {ques.options[j].optionText}
-                        </Typography>
-                      } />
-                   </div>
-
-                  <div>
-                    {op.optionImage !==""?(
-                      <img src={op.optionImage} width="160px" height="auto" />
-                    ): "" }
-                  </div>
-                 </div>
-                ))}  
+                      {
+                        ques.questionType == "Multiple Choice" ?
+                          ques.options.map((op, j) => (
+                            <div key={j}> 
+                              <div style={{ display: 'flex' }}> 
+                                <FormControlLabel disabled control={<Radio style={{ marginRight: '3px', }} />} label={
+                                  <Typography style={{ color: '#555555' }}>
+                                    {ques.options[j].optionText} 
+                                  </Typography> 
+                                }
+                                /> 
+                              </div>
+                              <div>
+                                {
+                                  op.optionImage !== "" ? (
+                                    <img src={op.optionImage} width="160px" height="auto" />  
+                                  )
+                                    :
+                                    ""
+                                }
+                              </div>    
+                            </div>      
+                          ))    
+                          :   
+                          <input value="Short/Long Text" />
+                        
+              }  
               </div>            
               ): ""}   
               </AccordionSummary>
@@ -310,18 +328,31 @@ function QuestionSetEditor(props)//props is for sending form id so that pre load
               <AccordionDetails>
               <div className="questions-options flex flex-col items-start p-[10px] gap-y-[10px]">
                 <div className="flex w-full justify-between items-center">
-                  <Typography >{i+1}.</Typography>
-                  <TextField 
-                        fullWidth={true} 
+                      <Typography >{i + 1}.</Typography>
+                      <div className="q-text-and-type-of-q  flex flex-col sm:flex-row">
+                  <TextField  
                         placeholder="Question Text" 
                         rows={1}
                         rowsMax={20}
                         multiline={true}
-
                         value={ques.questionText}
                         variant="filled"
                       onChange={(e)=>{handleQuestionValue(e.target.value, i)}}
-                      />
+                        />
+                              <FormControl fullWidth>
+        <InputLabel id="demo-simple-select-label">Question Type</InputLabel>
+                        <Select
+                          labelId="demo-simple-select-label"
+                          id="demo-simple-select" 
+                          defaultValue={1}
+                            label="Question Type"
+                            onChange={(e) => { changeQuestionType(i, e.target.value); }}
+                        >    
+                          <MenuItem value={1}>Multiple Choice</MenuItem>
+                          <MenuItem value={2}>Paragraph</MenuItem>       
+                          </Select>
+                          </FormControl>
+                        </div>
                       <style>
                         {`
                           .css-10ukbsc-MuiInputBase-root-MuiFilledInput-root{
@@ -353,8 +384,9 @@ function QuestionSetEditor(props)//props is for sending form id so that pre load
                      }
                 </div>
                 
-                <div style={{width: '100%'}}>
-                {ques.options.map((op, j)=>(
+                <div className="either-radio-or-paragraph" style={{width: '100%'}}>
+                      {ques.questionType === "Multiple Choice" ?
+                        ques.options.map((op, j) => (
                  
                  <div key={j}>
                     <div className="options flex justify-between ">
@@ -400,11 +432,14 @@ function QuestionSetEditor(props)//props is for sending form id so that pre load
                           }
                           </div>
                  </div>
-                ))}  
+                        ))
+                        :
+                        <input value="Short/Long Text" />
+                      }  
                 </div>  
                 
                 
-                {ques.options.length < 5 ? (
+                {ques.questionType==="Multiple Choice"&&ques.options.length < 5 ? (
                   <div>
                   <FormControlLabel disabled control={<Radio />} label={
                     <Button size="small" onClick={()=>{addOption(i)}} style={{textTransform: 'none', marginLeft:"-5px"}}>
