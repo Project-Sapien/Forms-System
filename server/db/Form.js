@@ -15,10 +15,15 @@ var FormSchema = new mongoose.Schema({
     default: ""
   },
 
+  formId: {
+    type:Number
+  },
+
   questions : [{
     open: {type: Boolean, default: false},
     questionText: String,
-    questionImage: {type: String, default: ""},
+    questionImage: { type: String, default: "" },
+    questionType:{type:String},
     options: [{
       optionText : String,
       optionImage: {type: String, default: ""},

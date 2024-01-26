@@ -45,7 +45,7 @@ module.exports = {
         try {
             var formId = req.params.formId;
 
-            await FormModel.findOne({_id: formId}).then(async(form)=>{
+            await FormModel.findOne({formId: formId}).then(async(form)=>{
                  
                  if(form == null){
                      res.status(404).send('Form not found');
@@ -94,25 +94,36 @@ module.exports = {
         try {
             var  formId =  req.body.formId;
             var data = {
+                formId,
                 name: req.body.name,
                 description: req.body.description,
                 questions: req.body.questions
             }
 
-            console.log("Hi, I am from backend, this is form data that i recivied");
+            console.log("Hi, I am from backend, this is form data that I received");
             
 
             console.log(data);
             
 
-            FormModel.findByIdAndUpdate(formId, data ,{new: true} ,(err, result)=>{
-                if(err){
-                    res.status(500).send(err)
-                }
-                else{
-                    res.status(200).json(result)
+            // FormModel.findByIdAndUpdate(formId, data ,{new: true} ,(err, result)=>{
+            //     if(err){
+            //         res.status(500).send(err)
+            //     }
+            //     else {
+            //        console.log(result)
+            //         res.status(200).json(result)
+            //     }
+            // });
+            FormModel.findOneAndUpdate({ formId: formId }, data, { new: true, upsert: true }, (err, result) => {
+                if (err) {
+                    res.status(500).send(err);
+                } else {
+                    console.log(result);
+                    res.status(200).json(result);
                 }
             });
+            
            
         } catch (error) {
             res.send(error)

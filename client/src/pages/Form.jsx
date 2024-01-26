@@ -11,7 +11,7 @@ import QuestionSetEditor from '../components/QuestionSetEditor';
 
 const Form = () => {
 
-  const { formid } = useParams();
+  const { formId } = useParams();
   
   const [docname, setDocName] = useState("Untitled");//later we will fetch from the database and get the name using the formid
 
@@ -49,7 +49,7 @@ const Form = () => {
         </Tabs>
       </Box>
       <CustomTabPanel value={value} index={0}>
-          <QuestionSetEditor formid={formid} />
+          <QuestionSetEditor  />
       </CustomTabPanel>
       <CustomTabPanel value={value} index={1}>
         Responses

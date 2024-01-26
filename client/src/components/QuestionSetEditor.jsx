@@ -2,6 +2,9 @@ import React from 'react'
 
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 
+//abstraction of params
+import { useParams } from 'react-router-dom';
+
 //mui utilities
 import {Autocomplete, FormControl, Grid, InputLabel, MenuItem, Select} from '@mui/material';
 import { Paper, Typography } from '@mui/material';
@@ -34,9 +37,9 @@ import ImageUploadModel from './ImageUploadModel';
 //form service
 import formService from '../services/formService';
 
-function QuestionSetEditor(props)//props is for sending form id so that pre loaded form can be edited
+function QuestionSetEditor()
 {
-  
+  const {formId} = useParams();
 
   const [questions, setQuestions]= React.useState([]);
   const [openUploadImagePop, setOpenUploadImagePop] = React.useState(false);
@@ -44,25 +47,33 @@ function QuestionSetEditor(props)//props is for sending form id so that pre load
   const [formData, setFormData] = React.useState({});
   const [loadingFormData, setLoadingFormData] = React.useState(true);
 
-//   React.useEffect(()=>{
-    
-//     if(props.formData.questions !== undefined){
-//       //console.log(props.formData.questions.length);
-//       if(props.formData.questions.length === 0){
-//         setQuestions([{questionText: "Question", options : [{optionText: "Option 1"}], open: false}]);
-//       } else{
-//         setQuestions(props.formData.questions)
-//       }
-//       setLoadingFormData(false)
-//     } 
-//     setFormData(props.formData)
-//   }, [props.formData])
+  React.useEffect(() => {
+       
+    console.log(formId);
+    formService.getForm(formId)
+    .then((data) => { 
+        console.log(data);
+        
+        setFormData(data)      
+        setQuestions(data.questions) 
+       },
+       error => {
+       const resMessage =
+           (error.response &&
+           error.response.data &&
+           error.response.data.message) ||
+           error.message ||
+           error.toString();
+           console.log(resMessage);
+       }
+    ); 
+},[formId]);
   
 
   function saveQuestions(){
     console.log("auto saving questions initiated");
     var data = {
-      formId: formData._id,
+      formId,
       name: formData.name,
       description: formData.description,
       questions: questions
@@ -295,7 +306,7 @@ function QuestionSetEditor(props)//props is for sending form id so that pre load
                       }
                 
                       {
-                        ques.questionType == "Multiple Choice" ?
+                        ques.questionType === "Multiple Choice" ?
                           ques.options.map((op, j) => (
                             <div key={j}> 
                               <div style={{ display: 'flex' }}> 

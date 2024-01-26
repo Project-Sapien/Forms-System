@@ -37,7 +37,7 @@ module.exports = {
                                  }
                                  console.log(user);
                                  
-                       const accessToken = jwt.sign(user, process.env.REACT_APP_ACCESS_TOKEN_SECRET, {expiresIn: '24h'});
+                       const accessToken = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, {expiresIn: '24h'});
                       // console.log(accessToken);
                        
                        res.status(200).json({
