@@ -5,6 +5,9 @@ import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 //abstraction of params
 import { useParams } from 'react-router-dom';
 
+//unique id for questions
+import { v4 as uuidv4 } from 'uuid';
+
 //mui utilities
 import {Autocomplete, FormControl, Grid, InputLabel, MenuItem, Select} from '@mui/material';
 import { Paper, Typography } from '@mui/material';
@@ -44,7 +47,7 @@ function QuestionSetEditor()
   const [questions, setQuestions]= React.useState([]);
   const [openUploadImagePop, setOpenUploadImagePop] = React.useState(false);
   const [imageContextData, setImageContextData] = React.useState({question: null, option: null});
-  const [formData, setFormData] = React.useState({});
+  const [formData, setFormData] = React.useState({name:"Untitled",description:"Form Description"});
   const [loadingFormData, setLoadingFormData] = React.useState(true);
 
   React.useEffect(() => {
@@ -118,7 +121,7 @@ function QuestionSetEditor()
   function addMoreQuestionField(){
       expandCloseAll(); 
 
-      setQuestions(questions=> [...questions, {questionText: "Question", options : [{optionText: "Option 1"}],questionType:"Multiple Choice", open: true}]);
+      setQuestions(questions=> [...questions, {questionText: "Question", options : [{optionText: "Option 1"}],questionType:"Multiple Choice", open: true ,questionId:uuidv4()+""}]);
   }
 
   function copyQuestion(i){
@@ -174,7 +177,7 @@ function QuestionSetEditor()
 
   function deleteQuestion(i){
     let qs = [...questions]; 
-    if(questions.length > 1){
+    if(questions.length > 0){
       qs.splice(i, 1);
     }
     setQuestions(qs)
@@ -192,7 +195,7 @@ function QuestionSetEditor()
     optionsOfQuestion[i].questionText = text;
       setQuestions(optionsOfQuestion);
   }
-
+//onDragEnd and reorder are used for drag and drop
  function onDragEnd(result) {
   if (!result.destination) {
     return;
@@ -268,32 +271,32 @@ function QuestionSetEditor()
     setQuestions(questionsCopy);
   }
 
-  function questionsUI(){
+  function questionsUI() {
+    //you need to mainly disable react strict mode to use drag and drop
     return  questions.map((ques, i)=> (
-      <Draggable key={i} draggableId={i + 'id'} index={i} className="w-[90vw] sm:w-[60vw]">
+      <Draggable  draggableId={ques.questionId}>
                   {(provided, snapshot) => (
                     <div
                       ref={provided.innerRef}
                       {...provided.draggableProps}
                       {...provided.dragHandleProps}
                     >
-          <div >
-            <div className="drag-icon text-center mb-[-7px]">
-              <DragIndicatorIcon style={{transform: "rotate(-90deg)", color:'#DAE0E2'}} fontSize="small"/>
-            </div>
-          
+          <div className={`rounded-xl ${ques.open?"border-l-4 border-[#4285f4]":""}`}>          
             <Accordion onChange={()=>{handleExpand(i)}} expanded={questions[i].open}>
               <AccordionSummary            
                 aria-controls="panel1a-content"
                 id="panel1a-header"
-                elevation={1} 
-                className="w-[90vw] sm:w-[60vw]"
-              >
-                { !questions[i].open ? (
+                  elevation={1} 
+                >
+                  <div className="flex flex-col w-full">
+                  <div className="drag-icon text-center">
+              <DragIndicatorIcon style={{transform: "rotate(-90deg)", color:'#DAE0E2'}} fontSize="small"/>
+                  </div>
+                  { !questions[i].open ? (
                                         <div className="accordion-child flex flex-col items-start ml-[3px] pt-[15px] pb-[15px]">
                 {/* <TextField id="standard-basic" label=" " value="Question" InputProps={{ disableUnderline: true }} />  */}
                 
-                <Typography variant="subtitle1" style={{marginLeft: '0px'}}>{i+1}.  {ques.questionText}</Typography>
+                <Typography variant="subtitle1" style={{marginLeft: '0px'}}>{ques.questionText}</Typography>
                       {
                         ques.questionImage !== "" ?
                         (
@@ -333,24 +336,34 @@ function QuestionSetEditor()
                         
               }  
               </div>            
-              ): ""}   
+              ): ""}
+                  </div>
               </AccordionSummary>
 
-              <AccordionDetails>
+                <AccordionDetails>
               <div className="questions-options flex flex-col items-start p-[10px] gap-y-[10px]">
-                <div className="flex w-full justify-between items-center">
-                      <Typography >{i + 1}.</Typography>
-                      <div className="q-text-and-type-of-q  flex flex-col sm:flex-row">
-                  <TextField  
+                    <div className="flex w-full lg:flex-row flex-col  gap-x-[1vw] gap-y-[3vh]">
+                      <div className="w-full">
+                      <TextField  
                         placeholder="Question Text" 
                         rows={1}
                         rowsMax={20}
                         multiline={true}
                         value={ques.questionText}
                         variant="filled"
+                        sx={{width:"100%",borderRadius:"10px"}}
                       onChange={(e)=>{handleQuestionValue(e.target.value, i)}}
                         />
-                              <FormControl fullWidth>
+                        <style>
+                          {`
+                            .css-phksla-MuiInputBase-root-MuiFilledInput-root{
+                              padding:16px 12px 16px;
+                            }
+                          `}
+                        </style>
+                      </div>
+                      <div className="flex gap-x-[1vw] float-right justify-center">
+                      <FormControl sx={{width:"200px"}}>
         <InputLabel id="demo-simple-select-label">Question Type</InputLabel>
                         <Select
                           labelId="demo-simple-select-label"
@@ -363,7 +376,6 @@ function QuestionSetEditor()
                           <MenuItem value={2}>Paragraph</MenuItem>       
                           </Select>
                           </FormControl>
-                        </div>
                       <style>
                         {`
                           .css-10ukbsc-MuiInputBase-root-MuiFilledInput-root{
@@ -374,6 +386,7 @@ function QuestionSetEditor()
                   <IconButton aria-label="upload image" onClick={()=>{uploadImage(i, null)}}>
                         <CropOriginalIcon />
                   </IconButton>
+                      </div>
                 </div>
 
                 <div>
@@ -501,39 +514,27 @@ function QuestionSetEditor()
 
 
   return (
-       <div className="question-set p-[20px]">
-          <Grid
-            className="parent-grid"
-        container
-        width="90vw"
-            direction="column"
-            justify="center"
-            alignItems="center"
-            >
+       <div className="question-set-with-progresser flex flex-col justify-center items-center gap-y-[3vh] py-[3vh] bg-[#f0ebf8]">
               {loadingFormData ? (<CircularProgress />):""}
               
-             <Grid item xs={12} sm={5} className="grid w-[90vw] sm:w-[60vw] pt-[2vh]">
+             <div className="questions-with-name-description w-[90vw] sm:w-[55vw] flex flex-col gap-y-[3vh]">
                  
-                  <Grid
-                      className="name-description border-t-8 border-[#673ab7] rounded-lg w-[90vw] sm:w-[60vw]">
-                            <Paper elevation={2} >
+                  <div className="name-description border-t-8 border-[#673ab7] rounded-lg bg-white">
                                   <div className="inputarea flex flex-col items-start p-[10px] gap-y-[2vh]">
                               <input
                                   className="form-name outline-none border-none text-3xl"
                                   type="text"
-                  value={formData.name ? formData.name : "Untitled"}
+                  value={formData.name}
                   onChange={(e)=>{setFormData({...formData,name:e.target.value})}}/>
                               <input
                                   className="form-description outline-none border-none text-lg"
                                   type="text"
-                  value={formData.description ? formData.description : "Form Description"}
+                  value={formData.description}
                   onChange={(e)=>{setFormData({...formData,description:e.target.value})}}/>
-                              </div>
-                            </Paper>     
-                  </Grid>  
+                              </div>    
+                  </div>  
 
-                  <Grid className="questions-grid p-[10px] w-[90vw] sm:w-[60vw]">
-                    <div>
+                  <div className="questions-div">
                     <ImageUploadModel handleImagePopOpen={openUploadImagePop} handleImagePopClose={()=>{setOpenUploadImagePop(false)}} updateImageLink={updateImageLink} contextData={imageContextData}/>
 
                     <DragDropContext onDragEnd={onDragEnd}>
@@ -541,7 +542,8 @@ function QuestionSetEditor()
                         {(provided, snapshot) => (
                           <div
                             {...provided.droppableProps}
-                            ref={provided.innerRef}
+                  ref={provided.innerRef}
+                  className="flex flex-col gap-y-[3vh]"
                           >
                             {questionsUI()}
 
@@ -550,28 +552,24 @@ function QuestionSetEditor()
                         )}
                       </Droppable>
                     </DragDropContext>
-                    <div className="buttons">                       
+                    <div className="buttons  flex justify-center gap-x-[2vw] pt-[3vh]">                       
                         <Button
                           variant="contained"
                           
                           onClick={addMoreQuestionField}
                           endIcon={<AddCircleIcon />}
-                          style={{margin: '5px'}}
                         >Add Question </Button>
 
                         <Button
                           variant="contained"
                           color="primary"
                           onClick={saveQuestions}
-                          style={{margin: '15px'}}
                           endIcon={<SaveIcon />}
                         >Save Questions </Button>
                       </div>
-                    </div>
-                  </Grid>        
-              </Grid>           
-           </Grid>
-       </div>
+                  </div>        
+              </div>           
+           </div>
   );
 }
 export default QuestionSetEditor

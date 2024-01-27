@@ -22,9 +22,9 @@ const Form = () => {
   };
   return (
       <div className="min-h-screen flex flex-col">
-      <div className="top flex py-[1vh] px-[10vw] justify-between">
+      <div className="top flex pt-[3vh] px-[10vw] justify-between">
         <span>{docname}</span>
-        <button className="px-[10px] py-[5px] bg-[#673ab7] text-white rounded-lg">Send</button>
+        <button className="px-[20px] py-[7px] bg-[#673ab7] text-white rounded-lg">Send</button>
       </div>
       <div className="tabs flex flex-col">
         <style>
@@ -38,6 +38,9 @@ const Form = () => {
             }
             .Mui-selected{
               color:#673ab7;
+            }
+            .css-19kzrtu{
+              padding:0;
             }
           `}
         </style>

@@ -23,7 +23,8 @@ var FormSchema = new mongoose.Schema({
     open: {type: Boolean, default: false},
     questionText: String,
     questionImage: { type: String, default: "" },
-    questionType:{type:String},
+    questionType: { type: String },
+    questionId: { type: String },
     options: [{
       optionText : String,
       optionImage: {type: String, default: ""},
