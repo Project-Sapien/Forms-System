@@ -149,17 +149,8 @@ function UserView() {
             </Toolbar>
           </AppBar>
           <br></br>
-
-              <Grid
-                container
-                direction="column"
-                justify="center"
-                alignItems="center"
-              >
-                <Grid item xs={12} sm={5} style={{width: '100%'}}>         
-                  <Grid style={{borderTop: '10px solid teal', borderRadius: 10}}>
-                        <div>
-                          <div>
+                <div className="flex flex-col justify-center items-center gap-y-[3vh]">         
+                  <div className="border-t-8 border-[#008080] rounded w-[90vw] sm:w-[55vw]">
                             <Paper elevation={2} style={{width:'100%'}}>
                               <div style={{display: 'flex',flexDirection:'column', alignItems:'flex-start', marginLeft: '15px', paddingTop: '20px', paddingBottom: '20px'}}>
                                 <Typography variant="h4" style={{fontFamily:'sans-serif Roboto', marginBottom:"15px"}}>
@@ -167,17 +158,15 @@ function UserView() {
                                 </Typography>
                                 <Typography variant="subtitle1">{formData.description}</Typography>
                               </div>
-                            </Paper>
-                          </div> 
-                      </div>       
-                  </Grid>  
+                            </Paper>       
+                  </div>  
 
                  {!isSubmitted ? (
                    <div>
                    <Grid>
                       
                       { questions.map((ques, i)=>(
-                        <div className="certain_question" key={i}>
+                        <div className="certain_question w-[90vw] sm:w-[55vw]" key={i}>
                           <br></br>
                         <Paper>
                           <div>
@@ -226,7 +215,7 @@ function UserView() {
                       </Grid>   
                       <Grid>
                     <br></br>
-                    <div className="flex">
+                    <div className="flex justify-center">
                       <Button variant="contained" color="primary" onClick={submitResponse}>
                         Submit
                       </Button>
@@ -248,8 +237,7 @@ function UserView() {
                    </div>
                  )
                 }               
-                </Grid>          
-              </Grid>   
+                </div>            
          </div>
         </div>
     )
