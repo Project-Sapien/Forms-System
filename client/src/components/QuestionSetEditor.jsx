@@ -332,7 +332,7 @@ function QuestionSetEditor()
                             </div>      
                           ))    
                           :   
-                          <input value="Short/Long Text" />
+                          <input defaultValue="Short/Long Text" />
                         
               }  
               </div>            
@@ -458,7 +458,7 @@ function QuestionSetEditor()
                  </div>
                         ))
                         :
-                        <input value="Short/Long Text" />
+                        <input defaultValue="Short/Long Text" />
                       }  
                 </div>  
                 
